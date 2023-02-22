@@ -9,10 +9,12 @@ import java.util.List;
 @RestController
 public class TravelController {
     private final UserRepository userRepository;
+    private final CountryTemperatureService countryTemperatureService;
     private final TravelRepository travelRepository;
-    TravelController(UserRepository userRepository, TravelRepository travelRepository){
+    TravelController(UserRepository userRepository, TravelRepository travelRepository, CountryTemperatureService countryTemperatureService){
         this.userRepository = userRepository;
         this.travelRepository = travelRepository;
+        this.countryTemperatureService = countryTemperatureService;
     }
     @PostMapping("/api/inscription")
     public ResponseEntity<?> register(@Validated @RequestBody RegisterRequest request) {
