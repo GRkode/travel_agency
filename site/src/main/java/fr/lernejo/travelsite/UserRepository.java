@@ -20,7 +20,6 @@ public class UserRepository {
     }
 
     public List<RegisterRequest> findByUserName(String userName){
-
         return registerList.stream()
             .filter(user -> user.userName().equals(userName))
             .collect(Collectors.toList());
