@@ -30,18 +30,10 @@ public class CountryTemperatureService {
             .filter(destination -> {
                 double temperature = destination.temperature();
                 for (RegisterRequest user : users) {
-                    if (temperature < user.minimumTemperatureDistance()) {
-                        return false;
-                    }
-                    if (!destination.country().equals(user.userCountry())) {
-                        continue;
-                    }
                     String expectation = user.weatherExpectation().toString().toUpperCase();
-                    if (!expectation.isEmpty() && !expectation.contains(getWeatherExpectation(temperature))) {
-                        return false;
-                    }
+                    return temperature >= user.minimumTemperatureDistance() && expectation.contains(getWeatherExpectation(temperature)) ;
                 }
-                return true;
+                return false;
             }).collect(Collectors.toList());
     }
 
@@ -58,25 +50,23 @@ public class CountryTemperatureService {
             Response<TemperatureRequest> response = client.getTemperatures(country).execute();
             if (response.isSuccessful()) {
                 TemperatureRequest prediction = response.body();
-                assert prediction != null;
                 List<Temperature> temperatures = prediction.temperatures();
-                double averageTemperature = temperatures.stream().mapToDouble(Temperature::temperature).average().orElse(Double.NaN);
+                double averageTemperature = temperatures.stream()
+                    .mapToDouble(Temperature::temperature).average()
+                    .orElse(Double.NaN);
                 countryWeathers.add(new TravelRequest(country, averageTemperature));
             } else {
                 countryWeathers.add(new TravelRequest(country, Double.NaN));
             }
         }
-
         return countryWeathers;
     }
 
     private String getWeatherExpectation(double temperature) {
-        if (temperature <= 5) {
-            return "COLD";
-        } else if (temperature <= 25) {
-            return "MILD";
-        } else {
-            return "HOT";
+        if (temperature <= 10) {
+            return "COLDER";
+        } else{
+            return "WARMER";
         }
     }
 }
