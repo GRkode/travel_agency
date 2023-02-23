@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,12 +46,10 @@ public class CountryTemperatureService {
 
     List<TravelRequest> getCountriesWeather(List<String> countries) throws IOException {
         List<TravelRequest> countryWeathers = new ArrayList<>();
-
         for (String country : countries) {
             Response<TemperatureRequest> response = client.getTemperatures(country).execute();
-            if (response.isSuccessful()) {
-                TemperatureRequest prediction = response.body();
-                List<Temperature> temperatures = prediction.temperatures();
+            if (response.isSuccessful() && !Objects.requireNonNull(response.body()).temperatures().isEmpty()) {
+                List<Temperature> temperatures = response.body().temperatures();
                 double averageTemperature = temperatures.stream()
                     .mapToDouble(Temperature::temperature).average()
                     .orElse(Double.NaN);
