@@ -21,8 +21,8 @@ public class TemperatureController {
         try {
             double temp1 = temperatureService.getTemperature(country);
             double temp2 = temperatureService.getTemperature(country);
-            Temperature t1 = new Temperature(LocalDate.now().minusDays(1), temp1);
-            Temperature t2 = new Temperature(LocalDate.now(), temp2);
+            Temperature t1 = new Temperature(LocalDate.now().minusDays(1).toString(), temp1);
+            Temperature t2 = new Temperature(LocalDate.now().toString(), temp2);
             List<Temperature> temperatures = List.of(t1, t2);
             TemperatureRequest response = new TemperatureRequest(country, temperatures);
             return ResponseEntity.ok(response);

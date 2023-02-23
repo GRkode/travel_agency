@@ -14,9 +14,10 @@ public class TravelController {
     private final UserRepository userRepository;
     private final CountryTemperatureService countryTemperatureService;
     private final Logger logger = LoggerFactory.getLogger(TravelController.class);
-
+    private final TravelRepository travelRepository;
     TravelController(UserRepository userRepository, TravelRepository travelRepository, CountryTemperatureService countryTemperatureService){
         this.userRepository = userRepository;
+        this.travelRepository = travelRepository;
         this.countryTemperatureService = countryTemperatureService;
     }
     @PostMapping("/api/inscription")
@@ -26,12 +27,10 @@ public class TravelController {
     }
 
     @GetMapping("/api/travels")
-    @ResponseBody
     public List<TravelRequest> getTravels(@RequestParam String userName) throws IOException {
         List<RegisterRequest> users = userRepository.findByUserName(userName);
-        if (users.isEmpty()) {
-            return List.of();
-        }
-        return countryTemperatureService.getTravels(users);
+        List<TravelRequest> travels = travelRepository.getTravelsByUserName(users);
+        logger.info(travels.toString());
+        return travels;
     }
 }
